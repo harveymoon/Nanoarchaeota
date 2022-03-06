@@ -18,15 +18,14 @@ class Agent {
     this.clockSpeed = 0.1;
 
     this.age = 0;
+    this.health = 100;
 
     this.responsiveness = 1;
 
     this.brains = [];
     this.InternalNeurons = [0, 0, 0];
 
-    this.inEndzone = false;
-
-
+  
 
       // var Geneome = "f1351fe3";
       // var Geneome = "aea73b91"
@@ -50,13 +49,16 @@ class Agent {
 
     runBrain() {
 
-
+      if(this.health<=0){
+        return
+      }
 
       for (let s in this.brains) {
         // console.log(this.brains[s])
         this.brains[s].RunSynapse(this);
       }
       this.age += 1;
+      this.health -=.5;
 
     let v3 = p5.Vector.sub(this.loc, this.ploc); // find dif between last move
     this.dir =  v3.heading(); // find heading from last pos

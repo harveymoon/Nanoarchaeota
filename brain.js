@@ -15,7 +15,6 @@ class ABrain {
 
 
       this.senses = [
-      this.Sens_DCtr,
       this.Sens_Age,
       this.Sens_Rnd,
       this.Sens_Bl,
@@ -30,19 +29,12 @@ class ABrain {
       this.Sens_BDx,
       this.Sens_BDy,
       this.Sens_BD,
-      this.Sens_Sfd,
-      this.Sens_Sl,
-      this.Sens_Sr
+      this.Sens_CFd, // closest food
+      this.Sens_CFdLR,
+      this.Sens_CFdUD, // food up down
+      this.Sens_Hngr
       ];
-      //this.Sens_Gen,
-      // this.Sens_Plr,
-      //      this.Sens_Pop,
-      //      this.Sens_Pfd,
-      //this.Sens_LPf,
-      //      this.Sens_LMy,
-        //    ,
-       
-      // this.Sens_Sg,
+     
 
       this.source_ID = this.source_ID % this.senses.length;
 
@@ -50,8 +42,8 @@ class ABrain {
 
 
       this.Act_OSC,
+      this.Act_EFd,
 
-      this.Act_SG, // emit pherimone
       this.Act_Mfd,
       this.Act_Mrn,
       this.Act_Mrv,
@@ -75,6 +67,8 @@ class ABrain {
       // console.log("connection_weight: " + this.connection_weight);
       // console.log("____")
     }
+
+
 
     RunSynapse(agentObj) {
       let sensVal = 0;
@@ -112,49 +106,56 @@ class ABrain {
   //     let xNow = int(agentObj.loc.x);
   //     let yNow = int(agentObj.loc.y);
   
-  //     let leftV = GetPixel(xNow - 5, yNow, pherimoneLayer)[0];
-  //     let rightV = GetPixel(xNow + 5, yNow, pherimoneLayer)[0];
-  
-  //     // let leftV = pherimoneLayer.get(xNow - 5, yNow);
-  //     // let rightV = pherimoneLayer.get(xNow + 5, yNow);
+
+
   
   //     // // console.log(leftV)
   //     // // console.log(rightV)
-  
-  //     let valOut = max(leftV, rightV); // darker regions have more pherimone , use darkest thing from either side
-  //     valOut = map(valOut, 0, 255, -1, 1);
+    //     valOut = map(valOut, 0, 255, -1, 1);
   //     return valOut;
   //     // pheromone gradient left-right
   //   }
 
 
-  Sens_Sl(agentObj) {
-    // console.log("SENS : pheromone gradient forward");
-    let leftPh = getPherimoneAtPixel(agentObj.farLeft)
-
-    let valOut = map(leftPh, 0, 100, -1, 1);
-    return valOut;
+  Sens_Hngr(agentObj){
+    return map(agentObj.health,0,100,1,0)
   }
 
-
-  Sens_Sr(agentObj) {
-    // console.log("SENS : pheromone gradient forward");
-
-    let rightPh = getPherimoneAtPixel(agentObj.farRight)
-
-    let valOut = map(rightPh, 0, 100, -1, 1);
-    return valOut;
-  }
-
-  
-    Sens_Sfd(agentObj) {
-      // console.log("SENS : pheromone gradient forward");
-
-      let forwardPh = getPherimoneAtPixel(agentObj.farForward)
-
-      let valOut = map(forwardPh, 0, 100, -1, 1);
-      return valOut;
+    Sens_CFd(agentObj){
+      let closest = closestFood(agentObj.loc)
+      if(closest.dist<250){
+        return map(closest.dist,0,250,0,1) // 
+      }
+      else{
+        return 0
+      }
     }
+
+    Sens_CFdLR(agentObj){ // the left-right relationship to closest food item within 50 pixels. 
+      let closest = closestFood(agentObj.loc)
+
+      let xDif = agentObj.loc.x - foodList[closest.id].loc.x
+      if(closest.dist<250){
+        let returnV = map(xDif,-250,250,-1,1) // 
+        // console.log(returnV)
+        return returnV
+      }else{
+        return 0
+      }
+    }
+
+    Sens_CFdUD(agentObj){ // the left-right relationship to closest food item within 50 pixels. 
+      let closest = closestFood(agentObj.loc)
+
+      let yDif = agentObj.loc.y - foodList[closest.id].loc.y
+      if(closest.dist<250){
+        return map(yDif,-250,250,-1,1) // 
+      }else{
+        return 0
+      }
+    }
+
+
     // Sens_Sg(agentObj) {
     //   // console.log("SENS : pheromone density");
     //   // pheromone density
@@ -374,12 +375,12 @@ class ABrain {
       //last movement x
     }
 
-    Sens_DCtr(agentObj){
-      // distance from end
-        let distN = dist(agentObj.loc.x, agentObj.loc.y, endzone[0], endzone[1] );
-      return map(distN, 0, width, 0, 1);
+    // Sens_DCtr(agentObj){
+    //   // distance from end
+    //     let distN = dist(agentObj.loc.x, agentObj.loc.y, endzone[0], endzone[1] );
+    //   return map(distN, 0, width, 0, 1);
 
-    }
+    // }
 
     Sens_Lx(agentObj) {
       // console.log("SENS : east west location");
@@ -444,6 +445,22 @@ class ABrain {
       //genetic similarity of fwd neighbor
     }
 
+
+    Act_EFd(trigger, agentObj){
+      // eat food
+
+
+      let closest = closestFood(agentObj.loc)
+      if(closest.dist<5 && trigger > .5){
+        if(agentObj.health+10 <= 100){
+          agentObj.health+=10;
+          foodList[closest.id].quantity-=1
+        }
+          
+      }
+
+    }
+
     Act_LPD(trigger, agentObj) {
       // console.log("ACT : set Long-Probe distance");
       // set long-probe distance
@@ -457,15 +474,7 @@ class ABrain {
       // set osculator
       agentObj.clockSpeed = trigger;
     }
-    Act_SG(trigger, agentObj) {
-      // console.log("ACT : emit pheromone");
-      // emit pheromone
-      let amt = constrain(abs(trigger), 0, .2);
-      // console.log(amt)
-      AddPherimoneAtPixel(agentObj.loc,  amt)
-      // pherimoneLayer.fill(255, 0, 0, amt);
-      // pherimoneLayer.ellipse(agentObj.loc.x, agentObj.loc.y, 2, 2);
-    }
+   
     Act_Res(trigger, agentObj) {
       // console.log("ACT : set responsiveness");
       //set responsiveness
