@@ -32,8 +32,8 @@ var fastestAgent = []
 var results = {}
 
 
-var endzone = [400,800,50]
-var  dropLoc = [400,10]
+var endzone = [760,760,30]
+var  dropLoc = [30,30]
 
 // var endzone = [400,420,140]
 // var  dropLoc = [450,120]
@@ -41,10 +41,117 @@ var  dropLoc = [400,10]
 // var GoodGenesGeneration = []
 
 var WinningTeam = []
+var grid = [];
+var MazeCols, MazeRows;
 
-var mazeImg;
-function preload(){
-	mazeImg = loadImage("mazeImg.png");
+var w = 60;
+let mazeBuild;
+function makeGrid() {
+	grid = [];
+	// mazeBuild.clear();
+	console.log("MAKE NEW MAZE");
+  mazeBuild = createGraphics(300, 300);
+  var current;
+  var stack = [];
+  MazeCols = floor(mazeBuild.width / w);
+  MazeRows = floor(mazeBuild.height / w);
+
+
+  for (var j = 0; j < MazeRows; j++) {
+    for (var i = 0; i < MazeCols; i++) {
+      var cell = new MazeCell(i, j);
+      grid.push(cell);
+    }
+  }
+
+  current = grid[0];
+
+//   mazeBuild.background(90,0,0);
+  mazeBuild.strokeWeight(20);
+  let done = false;
+  while (done == false) {
+    current.visited = true;
+    // current.highlight();
+    // STEP 1
+    var next = current.checkNeighbors();
+    if (next) {
+      next.visited = true;
+
+      // STEP 2
+      stack.push(current);
+
+      // STEP 3
+      removeWalls(current, next);
+
+      // STEP 4
+      current = next;
+    } else if (stack.length > 0) {
+      current = stack.pop();
+    }
+
+    if (stack.length == 0) {
+      done = true;
+    }
+  }
+  console.log("DONE");
+
+  for (var i = 0; i < grid.length; i++) {
+    grid[i].show();
+  }
+
+//   save(mazeBuild); //, 0, 0);
+
+  for(let wc = 0; wc < 100; wc++){
+	worldGrid[wc] = []
+	pherimoneLayer[wc] = []
+	for(let wr = 0; wr < 100; wr++){
+		worldGrid[wc][wr] = false
+		pherimoneLayer[wc][wr] = 0
+		
+		// makeGrid
+		let xn = mazeBuild.width * (wc/100)
+		let yn = mazeBuild.height * (wr/100)
+		let redH = mazeBuild.get(xn,yn)[0]
+		
+		if(redH > 100){
+			worldGrid[wc][wr] = true
+		}
+		
+		// if(wr >= 20 && wr < 30  && wc > 30&& wc < 90){
+		// 	worldGrid[wc][wr] = true
+		// }
+	}
+}
+
+
+
+
+}
+
+function index(i, j) {
+  if (i < 0 || j < 0 || i > MazeCols - 1 || j > MazeRows - 1) {
+    return -1;
+  }
+  return i + j * MazeCols;
+}
+
+function removeWalls(a, b) {
+  var x = a.i - b.i;
+  if (x === 1) {
+    a.walls[3] = false;
+    b.walls[1] = false;
+  } else if (x === -1) {
+    a.walls[1] = false;
+    b.walls[3] = false;
+  }
+  var y = a.j - b.j;
+  if (y === 1) {
+    a.walls[0] = false;
+    b.walls[2] = false;
+  } else if (y === -1) {
+    a.walls[2] = false;
+    b.walls[0] = false;
+  }
 }
 
 
@@ -192,6 +299,7 @@ function makeRandomGenome(){
 }
 
 function repopulate(loc = [] , genes = []  ) {
+	// makeGrid();
 	background(20)
 	
 	console.log("===============================")
@@ -356,7 +464,7 @@ function repopulate(loc = [] , genes = []  ) {
 		createCanvas(800, 800);
 		background(20);
 		FastestDiv = createDiv('NONE').position(820, 110);
-		numASlider = createSlider(1, 10000, NumAgents);
+		numASlider = createSlider(1, 50000, NumAgents);
 		numASlider.position(820, 30);
 		
 		// numCycleSlider = createSlider(10,1000,maxCycles)
@@ -390,48 +498,49 @@ function repopulate(loc = [] , genes = []  ) {
 		//
 		
 		
-		mazeImg.loadPixels();
+		// mazeImg.loadPixels();
 		
-		for(let wc = 0; wc < 100; wc++){
-			worldGrid[wc] = []
-			pherimoneLayer[wc] = []
-			for(let wr = 0; wr < 100; wr++){
-				worldGrid[wc][wr] = false
-				pherimoneLayer[wc][wr] = 0
+		// for(let wc = 0; wc < 100; wc++){
+		// 	worldGrid[wc] = []
+		// 	// pherimoneLayer[wc] = []
+		// 	for(let wr = 0; wr < 100; wr++){
+		// 		worldGrid[wc][wr] = false
+		// 		// pherimoneLayer[wc][wr] = 0
+		// 		// makeGrid
+		// 		let xn = mazeImg.width * (wc/100)
+		// 		let yn = mazeImg.height * (wr/100)
+		// 		let redH = mazeImg.get(xn,yn)[0]
 				
-				let xn = mazeImg.width * (wc/100)
-				let yn = mazeImg.height * (wr/100)
-				let redH = mazeImg.get(xn,yn)[0]
+		// 		if(redH < 100){
+		// 			worldGrid[wc][wr] = true
+		// 		}
 				
-				if(redH < 100){
-					worldGrid[wc][wr] = true
-				}
-				
-				// if(wr >= 20 && wr < 30  && wc > 30&& wc < 90){
-				// 	worldGrid[wc][wr] = true
-				// }
-			}
-		}
+		// 		// if(wr >= 20 && wr < 30  && wc > 30&& wc < 90){
+		// 		// 	worldGrid[wc][wr] = true
+		// 		// }
+		// 	}
+		// }
 		
+		makeGrid(); // does all the above and more
 		
 		// dropLoc = [width-130,height-130]
 		
 		
 		let ATHTeam = [
 
-			['0ADB1697', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
-			['AE6EF3D8', 'F592EC42', '6359EFE3', '85CF421A', '3E8F257C', '05A38A08', '6CC744BF', '06B5650F', '66369818', '7F4CB8CC', '054DE918', 'CAF7A858', 'F8D791B8', '739245CE', '24455D6E', 'EF3EE408', '097740D2', '0EDD826C', '7A9BE18C', 'D1BDD89F', '7AED639A', '7A8BADCC', 'DC3E1338', '60CB4A14'],
-			['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '44B67714', '62CE9A7C', '388611A2', '19CE08CA', '3EA65214', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', 'EFC1CC6C', 'D3F25108', '0EE6884C'],			
-			['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '36435E06', '62CE9A7C', '05AD875E', '149095A8', '95FD91E8', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', 'EFC1CC6C', 'D3F25108', '0EE6884C'],
-			['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '36435E06', '62CE9A7C', '855B15D8', '149095A8', '2F454848', '20BDE45E', '06261A15', 'EBC5E613', '08AFE13E', '0146D411', 'EFC1CC6C', 'D3F25108', 'AA86C27E'],
-			['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '95BBEAC6', '62CE9A7C', '8AB1380E', '19CE08CA', '3EA65214', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', '6F56558C', 'D3F25108', '0EE6884C'],
-			['D3577BD2', 'BA3710FE', '2918EBE1', 'C814C34C', '66B409B8', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '36435E06', '62CE9A7C', '0728010A', '161B4541', '2F454848', '20BDE45E', '06261A15', 'EBC5E613', '7D9FA234', '819A91AE', 'BCB6E44A', '0D79F5C8', 'AA86C27E'],
-			['0F854068', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
-			['5DDCAD33', '1D21AA5C', 'B0FFBF98', '636A5FF8', 'E8C7AD88', '08A3E787', '1A85B958', '866E68A6', '11EFC5CC', '0EF6B1B4', 'D5A9BBEE', '65A3F9B2', '4AC595B6', '3E343DE6', '78979B62', 'CDBFFDD2', '6F3CAA07', '2FEBFB32', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
-			['A9BAF364', '1D21AA5C', 'B0FFBF98', 'C997D8E8', '4501E3E4', '4ACF4344', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', '6EA5FB38', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
-			['7C903FC3', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', '0F973B48', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
-			['E4D21788', '1D21AA5C', 'B0FFBF98', '8CD346FA', '4501E3E4', '8EB45938', '1A85B958', '031AF5D5', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', '344B1E41', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
-			['0B2DD9AD', '0241FCDA', 'A58A71C3', '23BECAE8', '62B5E9C4', '20DBCB5A', '8CF78312', '05E5EBB8', '20C3F6D6', '5396FA8D', '4DC3F2A2', '62ABEA84', '23C5F064', '29446B4B', '4AA7F228', '59F7D8D7', 'B7EFD02C', '650BE119', '1ABBE868', 'F8DF41AF', '41BBEA16', 'E5433EBC', '65EBF97F', 'E82F21F8']
+			// ['0ADB1697', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
+			// ['AE6EF3D8', 'F592EC42', '6359EFE3', '85CF421A', '3E8F257C', '05A38A08', '6CC744BF', '06B5650F', '66369818', '7F4CB8CC', '054DE918', 'CAF7A858', 'F8D791B8', '739245CE', '24455D6E', 'EF3EE408', '097740D2', '0EDD826C', '7A9BE18C', 'D1BDD89F', '7AED639A', '7A8BADCC', 'DC3E1338', '60CB4A14'],
+			// ['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '44B67714', '62CE9A7C', '388611A2', '19CE08CA', '3EA65214', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', 'EFC1CC6C', 'D3F25108', '0EE6884C'],			
+			// ['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '36435E06', '62CE9A7C', '05AD875E', '149095A8', '95FD91E8', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', 'EFC1CC6C', 'D3F25108', '0EE6884C'],
+			// ['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '36435E06', '62CE9A7C', '855B15D8', '149095A8', '2F454848', '20BDE45E', '06261A15', 'EBC5E613', '08AFE13E', '0146D411', 'EFC1CC6C', 'D3F25108', 'AA86C27E'],
+			// ['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '95BBEAC6', '62CE9A7C', '8AB1380E', '19CE08CA', '3EA65214', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', '6F56558C', 'D3F25108', '0EE6884C'],
+			// ['D3577BD2', 'BA3710FE', '2918EBE1', 'C814C34C', '66B409B8', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '36435E06', '62CE9A7C', '0728010A', '161B4541', '2F454848', '20BDE45E', '06261A15', 'EBC5E613', '7D9FA234', '819A91AE', 'BCB6E44A', '0D79F5C8', 'AA86C27E'],
+			// ['0F854068', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
+			// ['5DDCAD33', '1D21AA5C', 'B0FFBF98', '636A5FF8', 'E8C7AD88', '08A3E787', '1A85B958', '866E68A6', '11EFC5CC', '0EF6B1B4', 'D5A9BBEE', '65A3F9B2', '4AC595B6', '3E343DE6', '78979B62', 'CDBFFDD2', '6F3CAA07', '2FEBFB32', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
+			// ['A9BAF364', '1D21AA5C', 'B0FFBF98', 'C997D8E8', '4501E3E4', '4ACF4344', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', '6EA5FB38', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
+			// ['7C903FC3', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', '0F973B48', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
+			// ['E4D21788', '1D21AA5C', 'B0FFBF98', '8CD346FA', '4501E3E4', '8EB45938', '1A85B958', '031AF5D5', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', '344B1E41', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
+			// ['0B2DD9AD', '0241FCDA', 'A58A71C3', '23BECAE8', '62B5E9C4', '20DBCB5A', '8CF78312', '05E5EBB8', '20C3F6D6', '5396FA8D', '4DC3F2A2', '62ABEA84', '23C5F064', '29446B4B', '4AA7F228', '59F7D8D7', 'B7EFD02C', '650BE119', '1ABBE868', 'F8DF41AF', '41BBEA16', 'E5433EBC', '65EBF97F', 'E82F21F8']
 		]
 		
 		
@@ -475,6 +584,7 @@ function repopulate(loc = [] , genes = []  ) {
 	
 	function draw() {
 		background(20,10);
+		// image(mazeBuild, 0, 0,width,height);
 	
 		let s = width/100;
 		
@@ -630,6 +740,7 @@ function repopulate(loc = [] , genes = []  ) {
 	
 	
 	function PURGE(){
+		makeGrid();
 		
 		if(!fastestWins){
 			pickWinners();
