@@ -50,7 +50,7 @@ function makeGrid() {
 	grid = [];
 	// mazeBuild.clear();
 	console.log("MAKE NEW MAZE");
-  mazeBuild = createGraphics(300, 300);
+  mazeBuild = createGraphics(500, 500);
   var current;
   var stack = [];
   MazeCols = floor(mazeBuild.width / w);
