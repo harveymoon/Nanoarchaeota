@@ -657,7 +657,7 @@ function repopulate(loc = [] , genes = []  ) {
 							fastestTime = drawCount;
 							console.log("New Fastest Agent!! : "  + drawCount)
 							
-							maxCycles = fastestTime*2
+							// maxCycles = fastestTime*2
 							// 
 							
 							
@@ -722,10 +722,14 @@ function repopulate(loc = [] , genes = []  ) {
 		}
 		
 		drawCount++;
-		if (drawCount > maxCycles) {
-			console.log("Timer Expired, repop")
-			PURGE()
-		} 
+		// if (drawCount > maxCycles) {
+		// 	console.log("Timer Expired, repop")
+		// 	PURGE()
+		// } 
+		if(WinningTeam.length >150){
+			console.log("max winners repop")
+			PURGE();
+		}
 		
 		noFill()
 		stroke(0)
