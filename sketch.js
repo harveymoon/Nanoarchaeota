@@ -32,8 +32,8 @@ var fastestAgent = []
 var results = {}
 
 
-var endzone = [760,760,30]
-var  dropLoc = [30,30]
+var endzone = [720,720,30]
+var  dropLoc = [40,40]
 
 // var endzone = [400,420,140]
 // var  dropLoc = [450,120]
