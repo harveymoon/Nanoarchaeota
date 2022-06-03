@@ -18,12 +18,14 @@ class Agent {
     this.clockSpeed = 0.1;
 
     this.age = 0;
-    this.health = 100;
+    this.health = random(98,101);
 
     this.responsiveness = 1;
 
     this.brains = [];
     this.InternalNeurons = [0, 0, 0];
+
+    this.hasEaten = false
 
   
 
@@ -58,7 +60,7 @@ class Agent {
         this.brains[s].RunSynapse(this);
       }
       this.age += 1;
-      this.health -=.5;
+      this.health -=.25;
 
     let v3 = p5.Vector.sub(this.loc, this.ploc); // find dif between last move
     this.dir =  v3.heading(); // find heading from last pos
@@ -66,24 +68,12 @@ class Agent {
 
 
 
-    rectMode(CENTER)
-    
-    if(this.inEndzone){
-        stroke(200, 0, 0);
-    
-    }else{
-         noStroke()
-    }
- 
-
+  //  if(DrawAgents){
     let colorN = '#' + this.Genes[0].substring(0, 3) 
-    // fill(colorN)
-    // noStroke()
-    // rect(this.loc.x, this.loc.y, 4, 4); // the agent pos
-
     stroke(colorN)
     line(this.loc.x, this.loc.y, this.ploc.x, this.ploc.y) // history line
-
+  //  }
+    
 
 
     }

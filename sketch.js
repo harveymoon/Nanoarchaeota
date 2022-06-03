@@ -7,7 +7,7 @@ var AgentsArray = [];
 
 let WinningTeam = [];
 
-var NumAgents =10000;
+var NumAgents =5000;
 var numASlider;
 
 var purgeButton;
@@ -39,8 +39,12 @@ var results = {}
 var foodList = []
 
 
-var survivorsLeft = 250;
+var survivorsLeft = 20;
 
+let ATHLifeEver = 0;
+
+
+let DrawAgents = false
 
 
 // var GoodGenesGeneration = []
@@ -71,7 +75,7 @@ function copyGene(inGene){
 function makeFood(){
 
 	foodList = []
-	for(let fd = 0; fd < 5; fd++){
+	for(let fd = 0; fd < 15; fd++){
 
 		let sx = random(2,width-2)
 		let sy = random(2,height-2)
@@ -169,6 +173,9 @@ function exportResults(){
 
 function makeRandomGenome(){
 	let Genome = []
+
+	numberOfGenes = random(8,32)
+
 	for (let b = 0; b < numberOfGenes; b++) {
 		let digit = random(80000, 50000000);
 		Genome.push(hex(digit, 8).replace('.', '0'));
@@ -188,7 +195,7 @@ function repopulate( genes = []  ) {
 	
 	console.log("===============================")
 	console.log('Repopulate')
-	console.log(genes)
+	// console.log(genes)
 	console.log("Generation: " +GenerationCounter)
 	console.log("winners : " + genes.length)
 	let percent = (genes.length/NumAgents)*100
@@ -214,7 +221,7 @@ function repopulate( genes = []  ) {
 
 
 	
-	// FastestDiv.html(results);
+	FastestDiv.html(healthiestAgents[0]);
 	
 	
 	NumAgents = numASlider.value()
@@ -230,7 +237,7 @@ function repopulate( genes = []  ) {
 		console.log("healthiest one:")
 		console.log(longestLife)
 		console.log(healthiestAgents)
-		genes.push(healthiestAgents)
+		// genes.push(healthiestAgents)
 	}
 	
 
@@ -266,6 +273,16 @@ function repopulate( genes = []  ) {
 				Genome = MuttateGene(copyGene(Genome));
 				// console.log("Mutation happened");
 			}
+
+			if (random() < chanceOfMutation/4) {
+				Genome = MuttateGene(copyGene(Genome));
+				// console.log("Mutation happened");
+			}
+			if (random() < chanceOfMutation/6) {
+				Genome = MuttateGene(copyGene(Genome));
+				// console.log("Mutation happened");
+			}
+
 		}
 		
 
@@ -347,13 +364,14 @@ function repopulate( genes = []  ) {
 	
 	function setup() {
 
+		let myStorage = window.localStorage;
 		
 		
 
 		// frameRate(5)
 		createCanvas(800, 800);
 		background(20);
-		// FastestDiv = createDiv('NONE').position(820, 110);
+		FastestDiv = createDiv('NONE').position(820, 110);
 		numASlider = createSlider(1, 10000, NumAgents);
 		numASlider.position(820, 30);
 		
@@ -418,7 +436,14 @@ function repopulate( genes = []  ) {
 		// dropLoc = [width-130,height-130]
 		
 		
-		let ATHTeam = []
+		let ATHTeam = [
+		]
+
+		if(myStorage){
+			ATHLifeEver = myStorage.drawCount;
+			ATHTeam.push(myStorage.healthiestEver.split(','))
+		}
+
 
 		repopulate( genes = ATHTeam);
 		
@@ -452,29 +477,10 @@ function repopulate( genes = []  ) {
 		//   }
 	}
 	
-	
-	
-	
-	function draw() {
+	function runAgents(){
 		background(20,10);
-	
-		let s = width/100;
-		
-		for (var cc = 0; cc < worldGrid.length; cc++) {
-			for (var rr = 0; rr < worldGrid.length; rr++) {
-				
-				
-				if(worldGrid[cc][rr] == true){
-					noStroke()
-					fill(0,120,120,180)
-					rect(cc*s,rr*s, s,s)
-				}
-				
-				
-			}
-		}
-		
 		let numAgentsLeft = 0
+		
 		
 		for (agentI in AgentsArray) {
 			let agentN = AgentsArray[agentI];
@@ -506,6 +512,41 @@ function repopulate( genes = []  ) {
 			
 			}		
 		}
+		return numAgentsLeft
+	}
+	
+	
+	function draw() {
+		
+	
+		let s = width/100;
+		
+		DrawAgents = false
+		if(drawCount> 180){
+			DrawAgents = true;
+			for (var cc = 0; cc < worldGrid.length; cc++) {
+				for (var rr = 0; rr < worldGrid.length; rr++) {
+					
+					if(worldGrid[cc][rr] == true){
+						noStroke()
+						fill(0,120,120,180)
+						rect(cc*s,rr*s, s,s)
+					}
+					
+				}
+			}
+		}
+		
+		if(DrawAgents == false){
+			for(let i = 0; i < 20; i++){
+				let numAgentsLeft = runAgents()
+				drawCount++;
+			}
+		}else{
+
+		}
+		let numAgentsLeft = runAgents()
+		drawCount++;
 		
 				
 		if(numAgentsLeft< survivorsLeft){
@@ -513,7 +554,7 @@ function repopulate( genes = []  ) {
 			PURGE()
 		}
 
-		drawCount++;
+		
 		if (drawCount > maxCycles) {
 			console.log("Timer Expired, repop")
 			PURGE()
@@ -539,19 +580,60 @@ function repopulate( genes = []  ) {
 		
 		print('PURGE')
 
+		ATHLifeEver = window.localStorage.drawCount;
+		
+		
+		let winningGenePool = []
+
+		let HealthiestThisRound = -1;
+		let HighestHealthThisRound = 0;
+
 		for (agentI in AgentsArray) {
 			let agentN = AgentsArray[agentI];
-			if(agentN.health>0){
+			if(agentN.health>0 && agentN.hasEaten){
+
+				if(HighestHealthThisRound < agentN.health){
+					HighestHealthThisRound = agentN.health
+					HealthiestThisRound = agentI
+				}
+
 				WinningTeam.push(agentI)
 			}
 		}
+
+
+
+		if(longestLife < drawCount && HealthiestThisRound != -1){
+			longestLife = drawCount;
+			print("New Longest Life! : " + drawCount)
+			healthiestAgents[0] = copyGene(AgentsArray[HealthiestThisRound].Genes)
+			// print(healthiestAgents)
+			if(drawCount > ATHLifeEver){ // faster then anything we ever found before on any tab.
+				ATHLifeEver = drawCount
+				print("NEW ATH !!!!!!!!")
+				localStorage.setItem('healthiestEver', healthiestAgents);
+				localStorage.setItem('drawCount', drawCount)
+			}
+			
+		}
+
+		if(healthiestAgents.length>0){
+			let HGNE = healthiestAgents[0]
+			winningGenePool.push(HGNE)
+		}
+		
+		winningGenePool.push(window.localStorage.healthiestEver.split(','))
+
 		print(WinningTeam.length)
 		
-			let winningGenePool = []
+			
 			for(WI in WinningTeam){
-
+				let repeats = AgentsArray[WinningTeam[WI]].health
 				let GNE = copyGene(AgentsArray[WinningTeam[WI]].Genes)
-				winningGenePool.push(GNE)
+				for(let h = 0; h < repeats; h++){
+					winningGenePool.push(GNE)
+				}
+			
 			}
 			
 			repopulate( genes =winningGenePool)

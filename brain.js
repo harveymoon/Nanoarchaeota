@@ -15,7 +15,7 @@ class ABrain {
 
 
       this.senses = [
-      this.Sens_Age,
+      // this.Sens_Age,
       this.Sens_Rnd,
       this.Sens_Bl,
       this.Sens_Br,
@@ -23,9 +23,9 @@ class ABrain {
       this.Sens_BLlr,
       this.Sens_Bfd,
       this.Sens_Osc,
-      this.Sens_LBf,
-      this.Sens_Lx,
-      this.Sens_Ly,
+      // this.Sens_LBf,
+      // this.Sens_Lx,
+      // this.Sens_Ly,
       this.Sens_BDx,
       this.Sens_BDy,
       this.Sens_BD,
@@ -124,7 +124,7 @@ class ABrain {
     Sens_CFd(agentObj){
       let closest = closestFood(agentObj.loc)
       if(closest.dist<250){
-        return map(closest.dist,0,250,0,1) // 
+        return map(closest.dist,0,250,1,0) // 
       }
       else{
         return 0
@@ -160,11 +160,11 @@ class ABrain {
     //   // console.log("SENS : pheromone density");
     //   // pheromone density
     // }
-    Sens_Age(agentObj) {
-      // console.log("SENS : age");
-      return map(agentObj.age, 0, maxCycles, -1, 1);
-      // age
-    }
+    // Sens_Age(agentObj) {
+    //   // console.log("SENS : age");
+    //   return map(agentObj.age, 0, maxCycles, -1, 1);
+    //   // age
+    // }
     Sens_Rnd(agentObj) {
       // console.log("SENS : random");
       //
@@ -347,33 +347,33 @@ class ABrain {
       agentObj.internalClock += agentObj.clockSpeed;
       return sin(this.internalClock);
     }
-    Sens_Plr(agentObj) {
-      // console.log("SENS : pop left right");
-      // population left-right
-    }
-    Sens_Pop(agentObj) {
-      // console.log("SENS : pop density nearby");
-      return 0;
-      // population density in near vacinity
-    }
-    Sens_Pfd(agentObj) {
-      // console.log("SENS : pop gradient forward");
-      return 0;
-      // population gradient forward
-    }
-    Sens_LPf(agentObj) {
-      // console.log("SENS : pop long-range forward");
-      // population long-range forward
-    }
-    Sens_LMy(agentObj) {
-      // console.log("SENS : last y movement");
-      //last movement y
-    }
+    // Sens_Plr(agentObj) {
+    //   // console.log("SENS : pop left right");
+    //   // population left-right
+    // }
+    // Sens_Pop(agentObj) {
+    //   // console.log("SENS : pop density nearby");
+    //   return 0;
+    //   // population density in near vacinity
+    // }
+    // Sens_Pfd(agentObj) {
+    //   // console.log("SENS : pop gradient forward");
+    //   return 0;
+    //   // population gradient forward
+    // }
+    // Sens_LPf(agentObj) {
+    //   // console.log("SENS : pop long-range forward");
+    //   // population long-range forward
+    // }
+    // Sens_LMy(agentObj) {
+    //   // console.log("SENS : last y movement");
+    //   //last movement y
+    // }
 
-    Sens_LBf(agentObj) {
-      // console.log("SENS : last x movement");
-      //last movement x
-    }
+    // Sens_LBf(agentObj) {
+    //   // console.log("SENS : last x movement");
+    //   //last movement x
+    // }
 
     // Sens_DCtr(agentObj){
     //   // distance from end
@@ -382,16 +382,16 @@ class ABrain {
 
     // }
 
-    Sens_Lx(agentObj) {
-      // console.log("SENS : east west location");
-      //east west world loc
-      return map(agentObj.loc.x, 0, width, -1, 1);
-    }
-    Sens_Ly(agentObj) {
-      // console.log("SENS : north south location");
-      //north south world loc
-      return map(agentObj.loc.y, 0, height, -1, 1);
-    }
+    // Sens_Lx(agentObj) {
+    //   // console.log("SENS : east west location");
+    //   //east west world loc
+    //   return map(agentObj.loc.x, 0, width, -1, 1);
+    // }
+    // Sens_Ly(agentObj) {
+    //   // console.log("SENS : north south location");
+    //   //north south world loc
+    //   return map(agentObj.loc.y, 0, height, -1, 1);
+    // }
     Sens_BDx(agentObj) {
       // console.log("SENS : east west border distance");
 
@@ -452,9 +452,10 @@ class ABrain {
 
       let closest = closestFood(agentObj.loc)
       if(closest.dist<5 && trigger > .5){
-        if(agentObj.health+10 <= 100){
-          agentObj.health+=10;
+        if(agentObj.health+20 <= 100){
+          agentObj.health+=20;
           foodList[closest.id].quantity-=1
+          agentObj.hasEaten = true
         }
           
       }

@@ -19,7 +19,7 @@ function closestFood(lookPos){
 class foodItem{
 constructor(startVec){
     this.loc = createVector(startVec.x,startVec.y)
-    this.quantity = 1000;
+    this.quantity = 50;
 }
 
 drawFoodItem(){
@@ -28,7 +28,7 @@ drawFoodItem(){
         noStroke()
         ellipse(this.loc.x, this.loc.y,10)
     }else{ // do reset
-      this.quantity = 1000;
+      this.quantity = 50;
 
 
       let sx = random(2,width-2)
