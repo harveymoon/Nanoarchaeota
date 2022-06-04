@@ -290,6 +290,9 @@ function exportResults(){
 
 function makeRandomGenome(){
 	let Genome = []
+
+	numberOfGenes = int(random(5,32));
+
 	for (let b = 0; b < numberOfGenes; b++) {
 		let digit = random(80000, 50000000);
 		Genome.push(hex(digit, 8).replace('.', '0'));
@@ -383,6 +386,14 @@ function repopulate(loc = [] , genes = []  ) {
 				// console.log("Mutation happened");
 			}
 			if (random() < chanceOfMutation/2) {
+				Genome = MuttateGene(copyGene(Genome));
+				// console.log("Mutation happened");
+			}
+			if (random() < chanceOfMutation/3) {
+				Genome = MuttateGene(copyGene(Genome));
+				// console.log("Mutation happened");
+			}
+			if (random() < chanceOfMutation/4) {
 				Genome = MuttateGene(copyGene(Genome));
 				// console.log("Mutation happened");
 			}
