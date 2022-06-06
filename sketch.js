@@ -7,7 +7,7 @@ var AgentsArray = [];
 
 var fastestWins = true
 
-var NumAgents =500000;
+var NumAgents =1000;
 var numASlider;
 
 var purgeButton;
@@ -26,7 +26,8 @@ var numberOfGenes = 24;
 
 var GenerationCounter = 0
 
-var fastestTime = 100000
+var fastestTime = 100000;
+var fastestRound = 1000000;
 var fastestAgent = []
 
 var results = {}
@@ -301,9 +302,27 @@ function makeRandomGenome(){
 	return Genome
 }
 
+
+
+function AddOneAgent(inGenes){
+	
+	sx = dropLoc[0]+random(5)
+	sy = dropLoc[1]+random(5)
+
+let agentN = new Agent(
+	sx,sy,
+	inGenes
+	);
+	AgentsArray.push(agentN);
+}
+
+
+
 function repopulate(loc = [] , genes = []  ) {
 	// makeGrid();
-	background(20)
+	background(20);
+
+	fastestRound = 5000;
 	
 	console.log("===============================")
 	console.log('Repopulate')
@@ -469,13 +488,20 @@ function repopulate(loc = [] , genes = []  ) {
 	
 	// }
 	
-	
+	// numAgentsDiv
 	function setup() {
 		// frameRate(5)
 		createCanvas(800, 800);
 		background(20);
 		FastestDiv = createDiv('NONE').position(820, 110);
-		numASlider = createSlider(1, 50000, NumAgents);
+		numAgentsDiv = createDiv('NONE').position(820, 180);
+		fastestRoundDiv = createDiv('NONE').position(820, 200);
+		drawCountDiv = createDiv('NONE').position(820, 220);
+		winnersRoundDiv = createDiv('NONE').position(820, 240);
+
+		
+
+		numASlider = createSlider(1, 5000, NumAgents);
 		numASlider.position(820, 30);
 		
 		// numCycleSlider = createSlider(10,1000,maxCycles)
@@ -538,7 +564,8 @@ function repopulate(loc = [] , genes = []  ) {
 		
 		
 		let ATHTeam = [
-
+			['5B69B4CA', '98BEA964', '3F42AF01', '4B62D2BC', 'CC74A507', '09EC3E0D', '72B90578', '0103A633', 'BE86DB0A', '18D8C693', '1DBFE43D', 'C8B2E3CA', '02B19338', '50730CD4', '09517414', '0151715E', 'E6FCD7E4', '0700938C', '0CCD2AD6', 'D49FBA8C', '21DEA829', '0CF5F858', 'EF3C1ED4', '090B97F1', 'C82DAF7A', '2A969B34', '2E724277', 'BC75C658', '0C8DAF5C', '94056C22', '751F7A5E'],
+			["5B69B4CA","98BEA964","3F42AF01","4B62D2BC","CC74A507","09EC3E0D","72B90578","0103A633","02B23AD4","18D8C693","1DBFE43D","C8B2E3CA","02B19338","50730CD4","09517414","0151715E","E6FCD7E4","0700938C","0CCD2AD6","D49FBA8C","21DEA829","0CF5F858","EF3C1ED4","090B97F1","CB8CC7BE","2A969B34","2E724277","BC75C658","0C8DAF5C","94056C22","751F7A5E"]
 			// ['0ADB1697', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
 			// ['AE6EF3D8', 'F592EC42', '6359EFE3', '85CF421A', '3E8F257C', '05A38A08', '6CC744BF', '06B5650F', '66369818', '7F4CB8CC', '054DE918', 'CAF7A858', 'F8D791B8', '739245CE', '24455D6E', 'EF3EE408', '097740D2', '0EDD826C', '7A9BE18C', 'D1BDD89F', '7AED639A', '7A8BADCC', 'DC3E1338', '60CB4A14'],
 			// ['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '44B67714', '62CE9A7C', '388611A2', '19CE08CA', '3EA65214', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', 'EFC1CC6C', 'D3F25108', '0EE6884C'],			
@@ -554,7 +581,10 @@ function repopulate(loc = [] , genes = []  ) {
 			// ['0B2DD9AD', '0241FCDA', 'A58A71C3', '23BECAE8', '62B5E9C4', '20DBCB5A', '8CF78312', '05E5EBB8', '20C3F6D6', '5396FA8D', '4DC3F2A2', '62ABEA84', '23C5F064', '29446B4B', '4AA7F228', '59F7D8D7', 'B7EFD02C', '650BE119', '1ABBE868', 'F8DF41AF', '41BBEA16', 'E5433EBC', '65EBF97F', 'E82F21F8']
 		]
 		
-		
+		let lastFastest = localStorage.getItem('fastestAgent');
+		if(lastFastest!=null){
+			ATHTeam.push(lastFastest)
+		}
 		
 		
 		
@@ -598,6 +628,12 @@ function repopulate(loc = [] , genes = []  ) {
 		// image(mazeBuild, 0, 0,width,height);
 	
 		let s = width/100;
+
+		numAgentsDiv.html(AgentsArray.length);
+		fastestRoundDiv.html(fastestRound)
+
+		winnersRoundDiv.html(WinningTeam.length)
+		drawCountDiv.html(drawCount)
 		
 		for (var cc = 0; cc < worldGrid.length; cc++) {
 			for (var rr = 0; rr < worldGrid.length; rr++) {
@@ -630,9 +666,11 @@ function repopulate(loc = [] , genes = []  ) {
 			let agentN = AgentsArray[agentI];
 			agentN.ploc.set(agentN.loc.x, agentN.loc.y)  // set previous to current location
 			
-			agentN.runBrain();
 			
 			
+			if(agentN.alive == true){
+				agentN.runBrain();
+			}
 			
 			agentN.floc = p5.Vector.fromAngle(agentN.dir, 3);
 			agentN.floc.add(agentN.loc)
@@ -655,15 +693,14 @@ function repopulate(loc = [] , genes = []  ) {
 			
 			
 			
-			
-			
 			if(fastestWins){
-				
 				
 				let distN = dist(agentN.loc.x, agentN.loc.y, endzone[0], endzone[1] );
 				
 				if (distN <= endzone[2]) {
 					if(!WinningTeam.includes(agentI)){
+
+
 						if(drawCount< fastestTime){
 							fastestTime = drawCount;
 							console.log("New Fastest Agent!! : "  + drawCount)
@@ -682,10 +719,61 @@ function repopulate(loc = [] , genes = []  ) {
 							
 							fastestAgent = copyGene(AgentsArray[agentI].Genes);
 							FastestDiv.html(fastestAgent);
+							localStorage.setItem('fastestAgent', fastestAgent);
+
+
+							
 							console.log(fastestAgent)
 						}
 						
-						WinningTeam.push(agentI);
+						if(WinningTeam.length==0){
+							fastestAgent = copyGene(AgentsArray[agentI].Genes);
+							localStorage.setItem('fastestAgent', fastestAgent);
+							
+						}
+
+						if(AgentsArray[agentI].age < fastestRound ){
+							fastestRound=AgentsArray[agentI].age 
+							console.log("NEW FASTEST THIS ROUND")
+						}
+
+						WinningTeam.push(copyGene(AgentsArray[agentI].Genes));
+						agentN.alive = false;
+						for(j = 0; j < 5; j++){
+							AddOneAgent( copyGene(AgentsArray[agentI].Genes) )
+
+
+							let TGenome = copyGene(AgentsArray[agentI].Genes)
+							if (random() < chanceOfMutation) {
+								TGenome = MuttateGene(TGenome);
+								
+								// console.log("Mutation happened");
+							}
+
+
+
+							if (random() < chanceOfMutation) {
+								TGenome = MuttateGene(copyGene(TGenome));
+								// console.log("Mutation happened");
+							}
+							if (random() < chanceOfMutation/2) {
+								TGenome = MuttateGene(copyGene(TGenome));
+								// console.log("Mutation happened");
+							}
+							if (random() < chanceOfMutation/3) {
+								TGenome = MuttateGene(copyGene(TGenome));
+								// console.log("Mutation happened");
+							}
+							if (random() < chanceOfMutation/4) {
+								TGenome = MuttateGene(copyGene(TGenome));
+								// console.log("Mutation happened");
+							}
+							AddOneAgent(TGenome )
+
+
+						}
+						
+						
 						
 						
 						// if(WinningTeam.length>25){
@@ -731,6 +819,28 @@ function repopulate(loc = [] , genes = []  ) {
 			
 			
 		}
+
+		for (let index = AgentsArray.length-1; index >0 ; index--) {
+			if(AgentsArray[index].alive == false){
+				AgentsArray.splice(index,1);
+			}
+		}
+		if(AgentsArray.length < NumAgents){
+			let switchN = int(random(0,3))
+
+			
+			if(switchN == 0){
+				AddOneAgent(makeRandomGenome());
+			}else if(switchN ==1){
+				if(WinningTeam.length >1){
+					AddOneAgent(WinningTeam[int(random(WinningTeam.length))]);
+				}
+				
+			}else if(switchN == 2){
+				AddOneAgent(fastestAgent);
+			}
+			
+		}
 		
 		drawCount++;
 		// if (drawCount > maxCycles) {
@@ -762,7 +872,7 @@ function repopulate(loc = [] , genes = []  ) {
 		}else{
 			let winningGenePool = []
 			for(WI in WinningTeam){
-				let GNE = copyGene(AgentsArray[WinningTeam[WI]].Genes)
+				let GNE = WinningTeam[WI]
 				winningGenePool.push(GNE)
 				
 			}

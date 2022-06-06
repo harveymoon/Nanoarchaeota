@@ -18,6 +18,7 @@ class Agent {
     this.clockSpeed = 0.1;
 
     this.age = 0;
+    this.alive = true;
 
     this.responsiveness = 1;
 
@@ -56,11 +57,15 @@ class Agent {
         // console.log(this.brains[s])
         this.brains[s].RunSynapse(this);
       }
-      this.age += 1;
+      
 
     let v3 = p5.Vector.sub(this.loc, this.ploc); // find dif between last move
     this.dir =  v3.heading(); // find heading from last pos
       this.age += 1;
+
+      if(this.age > fastestRound*2){
+        this.alive = false;
+      }
 
 
 
