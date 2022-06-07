@@ -33,7 +33,7 @@ var fastestAgent = []
 var results = {}
 
 
-var endzone = [720,720,30]
+var endzone = [720,720,50]
 var  dropLoc = [40,40]
 
 // var endzone = [400,420,140]
@@ -322,7 +322,7 @@ function repopulate(loc = [] , genes = []  ) {
 	// makeGrid();
 	background(20);
 
-	fastestRound = 5000;
+	fastestRound = 2000;
 	
 	console.log("===============================")
 	console.log('Repopulate')
@@ -565,7 +565,16 @@ function repopulate(loc = [] , genes = []  ) {
 		
 		let ATHTeam = [
 			['5B69B4CA', '98BEA964', '3F42AF01', '4B62D2BC', 'CC74A507', '09EC3E0D', '72B90578', '0103A633', 'BE86DB0A', '18D8C693', '1DBFE43D', 'C8B2E3CA', '02B19338', '50730CD4', '09517414', '0151715E', 'E6FCD7E4', '0700938C', '0CCD2AD6', 'D49FBA8C', '21DEA829', '0CF5F858', 'EF3C1ED4', '090B97F1', 'C82DAF7A', '2A969B34', '2E724277', 'BC75C658', '0C8DAF5C', '94056C22', '751F7A5E'],
-			["5B69B4CA","98BEA964","3F42AF01","4B62D2BC","CC74A507","09EC3E0D","72B90578","0103A633","02B23AD4","18D8C693","1DBFE43D","C8B2E3CA","02B19338","50730CD4","09517414","0151715E","E6FCD7E4","0700938C","0CCD2AD6","D49FBA8C","21DEA829","0CF5F858","EF3C1ED4","090B97F1","CB8CC7BE","2A969B34","2E724277","BC75C658","0C8DAF5C","94056C22","751F7A5E"]
+			["5B69B4CA","98BEA964","3F42AF01","4B62D2BC","CC74A507","09EC3E0D","72B90578","0103A633","02B23AD4","18D8C693","1DBFE43D","C8B2E3CA","02B19338","50730CD4","09517414","0151715E","E6FCD7E4","0700938C","0CCD2AD6","D49FBA8C","21DEA829","0CF5F858","EF3C1ED4","090B97F1","CB8CC7BE","2A969B34","2E724277","BC75C658","0C8DAF5C","94056C22","751F7A5E"],
+			['8CBEE25D', '1458DADC', '0C78319F', '022DCFB6', '3CB7CAB2', '243CA3A8', '3FC29C8E', '03E5CEEE', '09CA048E', '4741DD9C', '1DBFE43D', 'F15554EE', '016D2596', 'BCFCE6CB', '64EC84C6', 'CBD14FF2', '1975B32A', '36DDB5E6', '7B65A4B2', 'F910B004', 'A971E6CE', '0CF5F858', '07047A38', '090B97F1', 'A7A0AC01', '2A969B34', '7984D139', 'BC75C658', '4BC4C788', '94056C22', '751F7A5E'],
+			['932C588A', '98BEA964', '3F42AF01', '4B62D2BC', 'CC74A507', '5DEDB684', 'D0FBD0FC', 'D843371E', 'BC6D699C', '2755A328', '1DBFE43D', '22D248FC', '02B19338', '550D00EE', '09517414', '0151715E', 'E6FCD7E4', '36DDB5E6', '0CCD2AD6', 'D49FBA8C', '21DEA829', '0CF5F858', '18518974', '090B97F1', '853B0D42', 'E480C0DA', '879CD7CB', 'C902C848', '0C8DAF5C', '94056C22', '751F7A5E'],
+			['70351608', '1458DADC', '9EAF2928', '4B62D2BC', 'CC74A507', '5DEDB684', '72B90578', 'D843371E', '0AB2E1EC', '4741DD9C', '1DBFE43D', 'C8B2E3CA', '016D2596', 'BCFCE6CB', '73E45415', '0151715E', '1975B32A', '36DDB5E6', 'EC320DE4', 'D49FBA8C', '21DEA829', '0CF5F858', '07047A38', '090B97F1', '853B0D42', '2A969B34', '7984D139', 'BC75C658', '0C8DAF5C', '94056C22', '751F7A5E'],
+			['06E1860E', 'FC25CB1E', 'B7D92CD6', '4B62D2BC', '18537B3C', '09EC3E0D', '6CEE85E3', 'D843371E', '02B23AD4', '8BB27264', '1DBFE43D', '0ACBF598', '02B19338', 'D1DE016A', 'F9EABCC4', '06E243C2', '99996708', '0700938C', '0CADCCF6', 'D49FBA8C', '21DEA829', '0CF5F858', '07047A38', '68C748EE', 'AE001E7C', '0C6BADA8', '879CD7CB', 'BC75C658', '0C8DAF5C', '94056C22', '751F7A5E'],
+			['E18ED652', '98BEA964', '3F42AF01', '4B62D2BC', 'CC74A507', '09EC3E0D', '72B90578', '0FAFDE24', '5B127028', '01EB977C', '1DBFE43D', 'F99AF472', '5AFF0204', '09E1CD96', '09517414', '4362B742', 'E6FCD7E4', 'B5E9196C', '038EE963', 'D49FBA8C', '21DEA829', '0CF5F858', 'A067F5D4', '090B97F1', '3AC1E26C', '983BA506', '4C4295CF', 'BC75C658', '0C8DAF5C', '94056C22', 'F584E0CA'],
+			['22296E44', 'A41E0228', 'F9DB089E', '07BAA39B', '054E2115', 'F5CA8FDC', 'BCEEF4E6', '393B5584', '866D94B2', '1065C90C', '3B8CF15A', 'ED9762A6', '0598D3A4', '32072F8A', '0C76EABC', '4DE2CA62', '09595F13', '36C4066A', '038EE963', 'D49FBA8C', '85309C98', '0CF5F858', 'A546238E', '4BC8015E', '4B9836F6', '8B5CB90A', 'ADE7E85C', '7BA6C751', '0C8DAF5C', '6685D72F', '60B2D85E'],
+['72552544', 'A41E0228', 'BCC4038C', 'E123E82F', '054E2115', '1A5C0244', 'BCEEF4E6', '4B1B27AA', '866D94B2', '314AADA4', 'C130633F', '93BF2E73', 'F5C6D25A', '0D3553DD', '0C76EABC', '0BBACA2D', '5964F295', '69F5FA6C', '038EE963', 'D49FBA8C', '85309C98', '0CF5F858', 'A546238E', '395A5DC8', '4B9836F6', '6D6C477C', 'ADE7E85C', '7BA6C751', '0C8DAF5C', '6685D72F', '60B2D85E'],
+['22296E44', 'A41E0228', '1AA22CA8', 'E123E82F', '1B7B8B9A', '60833A47', '7C04FC0C', '393B5584', '866D94B2', '1065C90C', '55D0213E', '93BF2E73', '48CBB91C', '32072F8A', '0C76EABC', '0BBACA2D', '5964F295', 'EE0A6827', '038EE963', 'D49FBA8C', '85309C98', '0CF5F858', 'A546238E', '65765AE4', '4B9836F6', '6D6C477C', 'ADE7E85C', '02E1E16B', '0C8DAF5C', '6685D72F', '60B2D85E'],
+['22296E44', 'A41E0228', '1AA22CA8', 'E123E82F', '1B7B8B9A', '60833A47', '7C04FC0C', '393B5584', '866D94B2', '1065C90C', '55D0213E', '93BF2E73', '48CBB91C', '32072F8A', '0C76EABC', '0BBACA2D', '5964F295', 'EE0A6827', '038EE963', 'D49FBA8C', '85309C98', '0CF5F858', 'A546238E', '65765AE4', '4B9836F6', '6D6C477C', 'ADE7E85C', '7BA6C751', '0C8DAF5C', '6685D72F', '60B2D85E']
 			// ['0ADB1697', '1D21AA5C', 'B0FFBF98', '07CEFEDC', '4501E3E4', '8EB45938', '1A85B958', 'E1AB5C0C', '11EFC5CC', '0EF6B1B4', '085078D2', '65A3F9B2', 'A1BD482E', '02ABC5D2', '78979B62', 'CDBFFDD2', '6F3CAA07', '02DB624F', '1ABBE868', '5F73E782', 'A7CFFCE8', '0BABD86D', 'BC11C83C', 'E82F21F8'],
 			// ['AE6EF3D8', 'F592EC42', '6359EFE3', '85CF421A', '3E8F257C', '05A38A08', '6CC744BF', '06B5650F', '66369818', '7F4CB8CC', '054DE918', 'CAF7A858', 'F8D791B8', '739245CE', '24455D6E', 'EF3EE408', '097740D2', '0EDD826C', '7A9BE18C', 'D1BDD89F', '7AED639A', '7A8BADCC', 'DC3E1338', '60CB4A14'],
 			// ['D3577BD2', '0B6679E6', '2918EBE1', 'C814C34C', '0FBA7463', '23CDD766', 'E697797C', '836AE3C4', 'D63572FB', 'A5EFC364', '0F8FB413', '44B67714', '62CE9A7C', '388611A2', '19CE08CA', '3EA65214', '20BDE45E', '5A33AD28', 'EBC5E613', '08AFE13E', '707578CC', 'EFC1CC6C', 'D3F25108', '0EE6884C'],			
@@ -828,6 +837,28 @@ function repopulate(loc = [] , genes = []  ) {
 		if(AgentsArray.length < NumAgents){
 			let switchN = int(random(0,3))
 
+			if(WinningTeam.length>0){
+				let TGenome = copyGene(WinningTeam[int(random(WinningTeam.length))])
+				if (random() < chanceOfMutation) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				if (random() < chanceOfMutation/2) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				if (random() < chanceOfMutation/3) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				if (random() < chanceOfMutation/4) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				AddOneAgent(TGenome )
+	
+			}
+			
 			
 			if(switchN == 0){
 				AddOneAgent(makeRandomGenome());
@@ -837,7 +868,26 @@ function repopulate(loc = [] , genes = []  ) {
 				}
 				
 			}else if(switchN == 2){
-				AddOneAgent(fastestAgent);
+				// AddOneAgent(fastestAgent);
+				let TGenome = copyGene(fastestAgent)
+				if (random() < chanceOfMutation) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				if (random() < chanceOfMutation/2) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				if (random() < chanceOfMutation/3) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				if (random() < chanceOfMutation/4) {
+					TGenome = MuttateGene(copyGene(TGenome));
+					// console.log("Mutation happened");
+				}
+				AddOneAgent(TGenome )
+
 			}
 			
 		}
